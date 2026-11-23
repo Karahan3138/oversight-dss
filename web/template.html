@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Denetim Düzeni DSS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Kâğıt üstüne mürekkep: soğuk gri zemin, lacivert mürekkep, tek vurgu mavisi.
+     Düzen: solda beş aşamalı ray, sağda o aşamanın paneli; özet en başta. */
+  --paper: #f2f3f0;
+  --panel: #ffffff;
+  --ink: #1b2130;
+  --muted: #5b6375;
+  --rule: #d6d9de;
+  --accent: #2d49a6;
+  --ok: #2c7a56;
+  --warn: #a8701a;
+  --bad: #b2283f;
+  --display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #11141b; --panel: #191e28; --ink: #e5e8ef; --muted: #9aa3b6; --rule: #2b3241;
+    --accent: #8fa6ff; --ok: #5cc08f; --warn: #e0a64a; --bad: #f0778b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #11141b; --panel: #191e28; --ink: #e5e8ef; --muted: #9aa3b6; --rule: #2b3241;
+  --accent: #8fa6ff; --ok: #5cc08f; --warn: #e0a64a; --bad: #f0778b; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 15px/1.5 var(--body); font-variant-numeric: tabular-nums; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; }
+h1 { font-size: 22px; letter-spacing: -0.01em; }
+h2 { font-size: 26px; line-height: 1.15; }
+h3 { font-size: 18px; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--accent); }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 14px 24px; border-bottom: 1px solid var(--rule); background: var(--panel); }
+.top .sub { color: var(--muted); font-size: 13px; }
+.top .spacer { flex: 1; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--rule); white-space: nowrap; }
+.pill.demo { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); background: color-mix(in srgb, var(--warn) 10%, transparent); }
+.pill.live { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 45%, transparent); background: color-mix(in srgb, var(--ok) 10%, transparent); }
+.btn { border: 1px solid var(--rule); background: var(--panel); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 5px 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+
+.layout { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: calc(100vh - 62px); }
+.rail { border-right: 1px solid var(--rule); padding: 18px 0; position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; }
+.rail a { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 4px; padding: 9px 16px; color: var(--ink); text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+.rail a .no { font-family: var(--display); font-size: 15px; color: var(--muted); }
+.rail a .st { font-size: 11px; color: var(--muted); }
+.rail a[aria-current="page"] { border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); font-weight: 600; }
+.rail .sep { height: 1px; background: var(--rule); margin: 10px 16px; }
+main { padding: 26px 32px 60px; display: grid; gap: 22px; align-content: start; min-width: 0; }
+.lede { color: var(--muted); }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 18px 20px; display: grid; gap: 14px; min-width: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.tile { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.tile .k { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: .02em; }
+.tile .v { font-family: var(--display); font-size: 28px; line-height: 1.1; }
+.tile .d { font-size: 13px; color: var(--muted); }
+.eq { font-size: 12px; color: var(--muted); }
+
+.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 26px; align-items: start; }
+.verdict { display: grid; gap: 10px; }
+.verdict .code { font-family: var(--display); font-size: 64px; line-height: .95; color: var(--accent); }
+.verdict .name { font-family: var(--display); font-size: 30px; line-height: 1.1; }
+.verdict .def { color: var(--muted); font-size: 14px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.rank { display: grid; gap: 6px; }
+.rrow { display: grid; grid-template-columns: 38px minmax(0, 1fr) 72px; align-items: center; gap: 10px; }
+.rrow .c { font-weight: 700; font-size: 13px; }
+.bar { position: relative; height: 28px; border-radius: 4px; background: color-mix(in srgb, var(--ink) 5%, transparent); overflow: hidden; }
+.bar > span { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.bar > em { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 13px; white-space: nowrap; }
+.rrow.first .bar > span { background: var(--accent); }
+.rrow.first .bar > em { color: var(--panel); font-weight: 600; }
+.rrow.out .bar { height: auto; min-height: 28px; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--bad) 12%, transparent) 0 6px, transparent 6px 12px); }
+.rrow.out .bar > em { position: static; transform: none; display: block; padding: 5px 10px; white-space: normal; color: var(--bad); }
+.rrow .val { text-align: right; font-size: 13px; }
+.gate { border-top: 2px dashed color-mix(in srgb, var(--bad) 60%, transparent); margin-top: 6px; padding-top: 6px; font-size: 12px; color: var(--bad); font-weight: 600; }
+
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+td.n, th.n { text-align: right; }
+.scroll { overflow-x: auto; }
+.chip { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.chip.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.chip.bad { color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, transparent); }
+.chip.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 16%, transparent); }
+.chip.mute { color: var(--muted); background: color-mix(in srgb, var(--ink) 7%, transparent); }
+tr.hl td { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+tr.Lrow td:first-child { box-shadow: inset 3px 0 var(--warn); }
+
+.mini { display: grid; gap: 3px; }
+.mini .b { height: 7px; border-radius: 2px; background: var(--accent); }
+.mini .b.m0 { background: color-mix(in srgb, var(--ink) 30%, transparent); }
+.mini .b.m1 { background: color-mix(in srgb, var(--warn) 80%, transparent); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); align-items: center; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 5px; vertical-align: -2px; }
+
+.drop { border: 2px dashed var(--rule); border-radius: 10px; padding: 22px; display: grid; gap: 8px; justify-items: start; }
+.drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 18px; }
+.form label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; }
+.form label small { font-weight: 400; color: var(--muted); }
+.form input, .form select { padding: 6px 8px; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); }
+.log { font-size: 12px; color: var(--muted); }
+.notice { border-left: 3px solid var(--warn); padding: 8px 12px; background: color-mix(in srgb, var(--warn) 8%, transparent); font-size: 13px; }
+.notice.err { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 8%, transparent); }
+.progress { height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--ink) 8%, transparent); overflow: hidden; }
+.progress > span { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+svg text { fill: var(--muted); font: 11px var(--body); }
+svg .axis { stroke: var(--rule); }
+
+@media (max-width: 1000px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero, .grid2 { grid-template-columns: 1fr; } .form { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; }
+  .rail { position: static; display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 0; max-height: none; }
+  .rail a { grid-template-columns: auto auto; border-left: 0; border-bottom: 3px solid transparent; white-space: nowrap; padding: 10px 12px; }
+  .rail a .st, .rail .sep { display: none; }
+  .rail a[aria-current="page"] { border-bottom-color: var(--accent); }
+  main { padding: 18px 16px 48px; }
+  .tiles, .form { grid-template-columns: 1fr; }
+  .verdict .code { font-size: 48px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1 id="app-title">Denetim Düzeni DSS</h1>
+    <div class="sub" id="app-sub"></div>
+  </div>
+  <span id="source-pill" class="pill demo"></span>
+  <span class="spacer"></span>
+  <button class="btn" id="dl-xlsx" type="button" hidden></button>
+  <button class="btn" id="dl-json" type="button" hidden></button>
+  <div class="seg" role="group" aria-label="Dil / Language">
+    <button type="button" id="lang-tr" aria-pressed="true">TR</button>
+    <button type="button" id="lang-en" aria-pressed="false">EN</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="Aşamalar"></nav>
+  <main id="view" tabindex="-1"></main>
+</div>
+
+<script id="py-files" type="application/json">__PY_FILES__</script>
+<script id="demo-payload" type="application/json">__DEMO_PAYLOAD__</script>
+<script id="demo-forms" type="application/json">__DEMO_FORMS__</script>
+<script id="demo-xlsx" type="application/json">__DEMO_XLSX__</script>
+<script id="wheels" type="application/json">__WHEELS__</script>
+<script id="blank-zip" type="application/json">__BLANK_ZIP__</script>
+<script>
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const J = (id) => JSON.parse(document.getElementById(id).textContent);
+const PY_FILES = J("py-files");
+const DEMO = J("demo-payload");
+const DEMO_FORMS = J("demo-forms");
+const DEMO_XLSX = J("demo-xlsx");
+const WHEELS = J("wheels");
+const BLANK_ZIP = J("blank-zip");
+const COLORS = { A1: "#8e949c", A2: "#c4862a", A3: "#bfa12e", A4: "#3f9a63", A5: "#2f78b5", A6: "#7a5aa8", A7: "#c4465a" };
+const colorOf = (c) => COLORS[c] || "#888";
+
+// ------------------------------------------------------------------ metinler
+const EN_NAMES = {
+  A1: "Full automation with explanation", A2: "AI recommends, manager decides", A3: "Advisory appeal", A4: "Binding appeal",
+  A5: "Independent reviewer", A6: "Joint committee", A7: "System audit",
+  C1: "Procedural justice", C2: "Contestability", C3: "Explainability", C4: "Correction and redress", C5: "Meaningful review",
+  C6: "Auditability", C7: "Automation bias risk", C8: "Operating burden", C9: "Decision time", C10: "Privacy burden",
+  D1: "Fairness to employees", D2: "Effectiveness of oversight", D3: "Burdens",
+  "Üst yönetim": "Top management", "İnsan kaynakları": "Human resources", "Hat yöneticisi": "Line managers", "Hukuk / uyum": "Legal / compliance",
+  "BT / veri": "IT / data", "Çalışan veya çalışan temsilcisi": "Employees or representatives",
+  "Orta kademe yönetici": "Middle manager", "İlk kademe yönetici": "First-line manager", "Uzman": "Specialist", "Çalışan": "Employee",
+  "Tarama yok": "No screening", "Telafi edici": "Compensatory", "İkili kapı": "Binary gate",
+  "τ_F": "τ_F", "θ": "θ", "π (γ yüzdeliği)": "π (percentile for γ)", "δ": "δ", "Güç eşlemesi": "Power mapping", "Grup çıkarma": "Leave out group",
+  "Karar verici çıkarma": "Leave out decision maker", "Tutarsız BWM çıkarma": "Leave out inconsistent BWM", "Tüm gereklilikler": "All requirements",
+  concave: "concave", convex: "convex"
+};
+const EN_DEFS = {
+  A1: "The AI system makes the appraisal decision itself. There is no human review; the employee receives an explanation on request.",
+  A2: "The AI proposes an appraisal and the manager makes the final decision. There is no formal appeal channel.",
+  A3: "As A2, and the employee can appeal to the line manager; the outcome of the appeal is not binding.",
+  A4: "As A2, and the employee can appeal to the line manager, who decides in writing with reasons; the decision is binding.",
+  A5: "A competent reviewer outside the employee's line decides the appeal bindingly and can correct the decision and redress harm.",
+  A6: "A committee of management and an employee representative with a vote decides the appeal bindingly; representatives are consulted on the system.",
+  A7: "As A4, plus an impact assessment before use, regular sample audits of decisions and periodic review of the system with representatives."
+};
+const TXT = {
+  tr: {
+    title: "Denetim Düzeni DSS", sub: "YZ destekli performans değerlendirmesinde insan denetimi düzeni seçimi",
+    demo: "Örnek veri: yapay panel", live: "Yüklenen formlar", xlsx: "Excel raporu", json: "JSON özeti",
+    nav: { summary: "Özet", data: "Veri ve ayarlar", stage1: "İçerik geçerliği", stage2: "Hukuki tarama", stage3: "Ağırlık ve puan",
+      stage4: "Uzlaşı", voice: "Ses eşiği", stage5: "Doğrulama", warnings: "Uyarılar" },
+    summaryTitle: "Önerilen düzen", rankTitle: "Kabul edilen düzenlerin sıralaması",
+    rankNote: "Grup puanı V_i = α_i · û_ci (Eş. 22). Taralı satırlar hukuki taramada elenen düzenler.",
+    excluded: (F, t) => `Hukuken elendi: F = ${F} ≥ τ_F = ${t}`, gateLine: "Hukuki tarama eşiği",
+    first: "birinci", of: (a, b) => `${a}/${b}`,
+    facts: { V: "Grup puanı", alpha: "Kabul katsayısı α", adm: "Kabul edilen düzen" },
+    tiles: { lps: "Düşük güç payı", cb: "Yük yoğunlaşması C_β", cop: "Koruma maliyeti", voice: "Ses eşiği s*" },
+    lpsD: (m1, m2) => `M1'de ${m1}, M2'de ${m2}. L'nin toplam yükteki payı.`,
+    cbD: (m1, m2) => `M1'de ${m1}, M2'de ${m2}. Negatif: yük güçsüzlerde.`,
+    copD: "M1'den M2'ye güç ağırlıklı yük artışı.",
+    voiceD: (now, iL, st, sh) => `Kararlı eşik s^st = ${st}, ses payı φ_L = ${sh}. L'nin şu anki ağırlığı ${now}; tercihi ${iL}.`,
+    voiceNone: (mx) => `> ${mx}`, robust: "Öneri ne kadar sağlam?",
+    rb: { bench: "Karşılaştırma yöntemleri aynı düzeni seçiyor", dir: "Ağırlık belirsizliğinde birinci olma sıklığı",
+      oat: "Tek tek değişikliklerde birinci değişmedi", legal: "Diğer hukuki yaklaşımlar aynı düzeni seçiyor" },
+    dataTitle: "Formları yükleyin ve analizi çalıştırın",
+    dataLede: "Doldurulmuş uzman (U), hukukçu (H) ve karar verici (K) formlarını seçin. Dosyalar tarayıcınızdan çıkmaz: hesap bu sayfada, makaledeki yöntemin Python koduyla yapılır.",
+    drop: "Excel formlarını buraya bırakın ya da seçin", choose: "Dosya seç", useDemo: "Örnek formlarla çalıştır",
+    blankTitle: "Boş formlar", blankBtn: "↓ Boş formları indir (zip)",
+    blankText: "Uzman, hukukçu ve karar verici formlarının boş şablonları ve kısa bir kullanım notu. Her katılımcı için bir kopya oluşturup dosyaları U01_…, H01_…, K01_… diye adlandırın; sistem rolleri bu harflerden tanır. Formlar Türkçedir.",
+    blankNo: "Bu görünümde dosya indirilemiyor. Sayfayı claude.ai'de açın.",
+    files: (u, h, k, x) => `${u} uzman, ${h} hukukçu, ${k} karar verici formu${x ? `, ${x} tanınmayan dosya` : ""}`,
+    run: "Analizi çalıştır", rerun: "Ayarlarla yeniden çalıştır", params: "Ayarlar",
+    p: { tau: "Eleme eşiği τ_F", tauS: "F_i bu değere ulaşırsa düzen elenir (Eş. 6)", theta: "Belirsizlik toleransı θ", thetaS: "1: belirsizlik uyum sayılır; 0: aleyhine (Eş. 7)",
+      pi: "Uzlaşı eşiği yüzdeliği π", piS: "γ, başlangıç uzlaşı düzeylerinin bu yüzdeliği (Eş. 16)", delta: "Tavan toleransı δ", deltaS: "L'nin yük tavanını gevşetir (Eş. 20)",
+      power: "Kademe → güç eşlemesi", powerS: "Taban, içbükey ya da dışbükey", draws: "Dirichlet çekiliş sayısı Y", drawsS: "0: atla. 10.000 tarayıcıda uzun sürebilir (Eş. 33–34)" },
+    pm: { base: "Taban (1; 0,8; 0,6; 0,4; 0,2)", concave: "İçbükey (1; 0,9; 0,8; 0,6; 0,3)", convex: "Dışbükey (1; 0,5; 0,3; 0,2; 0,1)" },
+    eng: { idle: "Motor henüz yüklenmedi. İlk çalıştırmada Python ortamı indirilir (yaklaşık 30–60 sn).", booting: "Python ortamı yükleniyor…",
+      pkgs: "numpy, scipy ve openpyxl yükleniyor…", ready: "Motor hazır.", running: "Analiz çalışıyor…", done: (s) => `Bitti (${s} sn).`,
+      fail: "Motor yüklenemedi. Sayfanın Python ortamını indirebildiğinden emin olun; örnek sonuçlar yine de görüntülenebilir." },
+    stage1Title: "Aşama I · İçerik geçerliği (Eş. 1–3)", stage1None: "Bu çalıştırmada uzman formu yok.",
+    s1h: ["Öğe", "N", "N^E", "CVR", "N^E_crit", "CVR_crit", "Karar"], keep: "Korundu", review: "Gözden geçir",
+    stage2Title: "Aşama II · Hukuki tarama (Eş. 3–7)",
+    rstar: "Uygulanabilir gereklilikler ℛ*", rstarNote: (h) => `Bir gereklilik, H = ${h} hukukçunun yarısından fazlası 'uygulanmaz' demedikçe taramaya girer.`,
+    noSay: (n) => `${n} 'uygulanmaz'`, inR: "ℛ*'da", outR: "dışarıda",
+    tifTitle: "Ortalama değerlendirmeler T̄ / Ī / F̄ (Eş. 4)", aggTitle: "Birleşik değerler ve kabul (Eş. 5–7)",
+    aggH: ["Düzen", "T_i", "I_i", "F_i", "Durum", "α_i"], admitted: "Kabul", excl: "Elendi",
+    stage3Title: "Aşama III · Ağırlıklar ve faydalar (Eş. 8–13)",
+    wTitle: "Küresel ölçüt ağırlıkları w_kj (Eş. 10)", wNote: "Hücre koyuluğu ağırlığı gösterir. Turuncu çizgi: en düşük güç grubu L.",
+    crTitle: "BWM tutarlılığı (Eş. 9)", crNote: "Eşik: Liang ve ark. (2020). Eşiği aşan bloklar Aşama V'te test edilir.",
+    crH: ["Karar verici", "Blok", "a_BW", "CR^I", "Eşik", "Durum"], over: "Eşik üstü", within: "Tutarlı",
+    uTitle: "Bireysel faydalar u_ki (Eş. 13)", dmH: ["Kod", "Grup", "Kademe", "p_k"],
+    stage4Title: "Aşama IV · Güç koşullu uzlaşı (Eş. 14–25)",
+    s4Lede: (g, n) => `Uzlaşı eşiği γ = ${g}. L grubunda ${n} karar verici var.`,
+    diagH: ["Model", "Toplam yük Σβ", "Güç ağırlıklı yük Σpβ", "LPS", "C_β"], models: { M0: "M0 güçten bağımsız", M1: "M1 konuma bağlı maliyet", M2: "M2 önerilen" },
+    burdenTitle: "Karar vericilerin yükü β_k (Eş. 17)", ucTitle: "Ortak faydalar û_ci (Eş. 15)",
+    voiceTitle: "Ses eşiği (Eş. 26–28)",
+    voiceLede: (iL, now) => `L'nin tercih ettiği kabul edilen düzen ${iL}. L'nin şu anki toplam ağırlığı ${now}. Şerit, ızgaradaki her ağırlıkta birinci olan düzeni gösterir; tercih bir ağırlıkta birinci olup daha büyük ağırlıkta yeniden kaybedebilir.`,
+    voiceH: ["Model", "i_L", "s* (ilk kazanılan)", "s^st (sonrasında hep kazanılan)", "φ_L (kazanılan pay)"],
+    voiceAxis: "L'nin toplam ağırlığı s", voiceRows: { M2: "M2", M1: "M1" }, nowMark: "şimdi",
+    stage5Title: "Aşama V · Doğrulama (Eş. 29–34)",
+    benchTitle: "Karşılaştırma yöntemleri (Adım 21–22)", benchNote: (r) => `Referans: û_ci (M2) sıralaması, birinci ${r}. Hücreler sırayı gösterir.`,
+    sameTop: "Aynı birinci", spearman: "Spearman ρ_S", ref: "û_ci (M2)",
+    legalTitle: "Hukuki gerekliliklerin farklı işlenmesi (Adım 23)", legalH: ["Yaklaşım", "Birinci", "Taramadan farklı", "Elenen düzen birinci"],
+    dirTitle: (y) => `Ağırlık belirsizliği: birinci olma sıklığı f_i (Eş. 34), Y = ${y}`, dirNone: "Bu çalıştırmada Dirichlet testi yapılmadı.",
+    oatTitle: "Tek tek değişiklik (Adım 25)", oatH: ["Test", "Ayar", "Birinci", "Değişti", "Spearman"],
+    yes: "Evet", no: "Hayır", warnTitle: "Uyarılar ve veri sorunları", noWarn: "Uyarı yok.", excludedDM: "Analizden çıkarılan karar verici",
+    tie: "Eşitlik var: birinci düzen başka bir düzenle aynı puanda.", none: "—"
+  },
+  en: {
+    title: "Oversight Arrangement DSS", sub: "Choosing a human oversight arrangement for AI-supported performance appraisal",
+    demo: "Example data: synthetic panel", live: "Uploaded forms", xlsx: "Excel report", json: "JSON summary",
+    nav: { summary: "Summary", data: "Data and settings", stage1: "Content validity", stage2: "Legal screening", stage3: "Weights and ratings",
+      stage4: "Consensus", voice: "Voice threshold", stage5: "Validation", warnings: "Warnings" },
+    summaryTitle: "Recommended arrangement", rankTitle: "Ranking of the admissible arrangements",
+    rankNote: "Group score V_i = α_i · û_ci (Eq. 22). Hatched rows were excluded by the legal screening.",
+    excluded: (F, t) => `Excluded: F = ${F} ≥ τ_F = ${t}`, gateLine: "Legal screening threshold",
+    first: "first", of: (a, b) => `${a}/${b}`,
+    facts: { V: "Group score", alpha: "Admissibility α", adm: "Admissible arrangements" },
+    tiles: { lps: "Low-power share", cb: "Burden concentration C_β", cop: "Cost of protection", voice: "Voice threshold s*" },
+    lpsD: (m1, m2) => `${m1} under M1, ${m2} under M2. Share of the total burden borne by L.`,
+    cbD: (m1, m2) => `${m1} under M1, ${m2} under M2. Negative: burden on the less powerful.`,
+    copD: "Increase in the power-weighted burden from M1 to M2.",
+    voiceD: (now, iL, st, sh) => `Stable threshold s^st = ${st}, voice share φ_L = ${sh}. L's current weight ${now}; its choice ${iL}.`,
+    voiceNone: (mx) => `> ${mx}`, robust: "How robust is the recommendation?",
+    rb: { bench: "Benchmark methods choose the same arrangement", dir: "First-rank frequency under weight uncertainty",
+      oat: "One-at-a-time changes left the top unchanged", legal: "Other legal treatments choose the same arrangement" },
+    dataTitle: "Load the forms and run the analysis",
+    dataLede: "Select the completed expert (U), lawyer (H) and decision-maker (K) forms. The files never leave your browser: the page runs the Python code of the method itself.",
+    drop: "Drop the Excel forms here or choose them", choose: "Choose files", useDemo: "Run with the example forms",
+    blankTitle: "Blank forms", blankBtn: "↓ Download blank forms (zip)",
+    blankText: "Blank expert, lawyer and decision-maker forms with a short guide. Make one copy per participant and name the files U01_…, H01_…, K01_…; the DSS recognises the roles from these letters. The forms are in Turkish.",
+    blankNo: "Files cannot be downloaded in this view. Open the page on claude.ai.",
+    files: (u, h, k, x) => `${u} expert, ${h} lawyer, ${k} decision-maker forms${x ? `, ${x} unrecognized` : ""}`,
+    run: "Run the analysis", rerun: "Run again with these settings", params: "Settings",
+    p: { tau: "Exclusion threshold τ_F", tauS: "An arrangement is excluded when F_i reaches it (Eq. 6)", theta: "Tolerance of indeterminacy θ", thetaS: "1: counts as satisfaction; 0: counts against (Eq. 7)",
+      pi: "Consensus percentile π", piS: "γ is this percentile of the initial consensus levels (Eq. 16)", delta: "Cap tolerance δ", deltaS: "Relaxes the burden cap on L (Eq. 20)",
+      power: "Level → power mapping", powerS: "Base, concave or convex", draws: "Dirichlet draws Y", drawsS: "0: skip. 10,000 can take long in a browser (Eqs. 33–34)" },
+    pm: { base: "Base (1, 0.8, 0.6, 0.4, 0.2)", concave: "Concave (1, 0.9, 0.8, 0.6, 0.3)", convex: "Convex (1, 0.5, 0.3, 0.2, 0.1)" },
+    eng: { idle: "The engine is not loaded yet. The first run downloads the Python environment (about 30–60 s).", booting: "Loading the Python environment…",
+      pkgs: "Loading numpy, scipy and openpyxl…", ready: "Engine ready.", running: "Running the analysis…", done: (s) => `Done (${s} s).`,
+      fail: "The engine could not be loaded. Check that the page can download its Python environment; the example results remain available." },
+    stage1Title: "Stage I · Content validity (Eqs. 1–3)", stage1None: "No expert forms in this run.",
+    s1h: ["Item", "N", "N^E", "CVR", "N^E_crit", "CVR_crit", "Decision"], keep: "Retained", review: "Review",
+    stage2Title: "Stage II · Legal admissibility screening (Eqs. 3–7)",
+    rstar: "Applicable requirements ℛ*", rstarNote: (h) => `A requirement is screened unless more than half of the H = ${h} lawyers judge that it does not apply.`,
+    noSay: (n) => `${n} 'does not apply'`, inR: "in ℛ*", outR: "outside",
+    tifTitle: "Mean assessments T̄ / Ī / F̄ (Eq. 4)", aggTitle: "Combined values and admissibility (Eqs. 5–7)",
+    aggH: ["Arrangement", "T_i", "I_i", "F_i", "Status", "α_i"], admitted: "Admissible", excl: "Excluded",
+    stage3Title: "Stage III · Weights and utilities (Eqs. 8–13)",
+    wTitle: "Global criterion weights w_kj (Eq. 10)", wNote: "Shading shows the weight. Orange edge: least powerful group L.",
+    crTitle: "BWM consistency (Eq. 9)", crNote: "Thresholds from Liang et al. (2020). Sets above the threshold are tested in Stage V.",
+    crH: ["Decision maker", "Set", "a_BW", "CR^I", "Threshold", "Status"], over: "Above", within: "Consistent",
+    uTitle: "Individual utilities u_ki (Eq. 13)", dmH: ["Code", "Group", "Level", "p_k"],
+    stage4Title: "Stage IV · Power-conditioned consensus (Eqs. 14–25)",
+    s4Lede: (g, n) => `Consensus threshold γ = ${g}. Group L has ${n} decision makers.`,
+    diagH: ["Model", "Total burden Σβ", "Power-weighted Σpβ", "LPS", "C_β"], models: { M0: "M0 power-blind", M1: "M1 position-based", M2: "M2 proposed" },
+    burdenTitle: "Burden of each decision maker β_k (Eq. 17)", ucTitle: "Collective utilities û_ci (Eq. 15)",
+    voiceTitle: "Voice threshold (Eqs. 26–28)",
+    voiceLede: (iL, now) => `L prefers ${iL} among the admissible arrangements. L's current total weight is ${now}. The strip shows the first arrangement at each weight on the grid; the preferred arrangement can rank first at one weight and lose again at a larger one.`,
+    voiceH: ["Model", "i_L", "s* (first win)", "s^st (wins from here on)", "φ_L (share of wins)"],
+    voiceAxis: "Total weight of L, s", voiceRows: { M2: "M2", M1: "M1" }, nowMark: "now",
+    stage5Title: "Stage V · Validation (Eqs. 29–34)",
+    benchTitle: "Benchmark methods (Steps 21–22)", benchNote: (r) => `Reference: ranking by û_ci (M2), first ${r}. Cells show ranks.`,
+    sameTop: "Same first", spearman: "Spearman ρ_S", ref: "û_ci (M2)",
+    legalTitle: "Other treatments of the legal requirements (Step 23)", legalH: ["Treatment", "First", "Differs", "Excluded arrangement first"],
+    dirTitle: (y) => `Weight uncertainty: first-rank frequency f_i (Eq. 34), Y = ${y}`, dirNone: "No Dirichlet test in this run.",
+    oatTitle: "One-at-a-time changes (Step 25)", oatH: ["Test", "Setting", "First", "Changed", "Spearman"],
+    yes: "Yes", no: "No", warnTitle: "Warnings and data issues", noWarn: "No warnings.", excludedDM: "Decision maker left out",
+    tie: "Tie: the first arrangement shares its score with another.", none: "—"
+  }
+};
+
+// ------------------------------------------------------------------ durum
+const S = { lang: "tr", P: DEMO, source: "demo", files: [], xlsx: b64ToBytes(DEMO_XLSX.xlsx), json: new TextEncoder().encode(DEMO_XLSX.json),
+  engine: "idle", engineMsg: "", progress: 0, error: null, downloads: null, diag: [], slow: false,
+  params: { tau_F: DEMO.params.tau_F, theta: DEMO.params.theta, gamma_percentile: DEMO.params.gamma_percentile, delta: DEMO.params.delta, power_mapping: "base", draws: 1000 } };
+try { const l = localStorage.getItem("dss-lang"); if (l === "en" || l === "tr") S.lang = l; } catch (_) {}
+const T = () => TXT[S.lang];
+const nf = (d) => new Intl.NumberFormat(S.lang === "tr" ? "tr-TR" : "en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const f = (x, d = 3) => (x === null || x === undefined || Number.isNaN(x)) ? "—" : nf(d).format(x);
+const pct = (x) => (x === null || x === undefined) ? "—" : new Intl.NumberFormat(S.lang === "tr" ? "tr-TR" : "en-US", { style: "percent", maximumFractionDigits: 1 }).format(x);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const nm = (code, tr) => S.lang === "en" ? (EN_NAMES[code] || EN_NAMES[tr] || tr || code) : (tr || code);
+const altName = (c) => { const a = S.P.alts.find((x) => x.code === c); return nm(c, a && a.name); };
+const altIdx = (c) => S.P.alts.findIndex((x) => x.code === c);
+const eqL = (n, many) => (S.lang === "tr" ? "Eş. " : (many ? "Eqs. " : "Eq. ")) + n;
+function b64ToBytes(b) { if (!b) return null; const s = atob(b); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+
+// ------------------------------------------------------------------ çatı
+const ROUTES = ["summary", "data", "stage1", "stage2", "stage3", "stage4", "voice", "stage5", "warnings"];
+const NUM = { summary: "", data: "", stage1: "I", stage2: "II", stage3: "III", stage4: "IV", voice: "IV", stage5: "V", warnings: "" };
+function route() { const h = location.hash.replace("#", ""); return ROUTES.includes(h) ? h : "summary"; }
+function railStatus(r) {
+  const P = S.P; if (!P || P.error || P.stage1_only) return "";
+  const adm = P.legal ? P.legal.adm.filter(Boolean).length : 0;
+  switch (r) {
+    case "stage1": return P.stage1 ? `${P.stage1.filter((x) => x.retained).length}/${P.stage1.length}` : "";
+    case "stage2": return `${adm}/${P.alts.length}`;
+    case "stage3": { const n = P.dms.filter((d) => d.inconsistent).length; return n ? `${n} ⚠` : `K ${P.dms.length}`; }
+    case "voice": return P.voice.M2.s_star !== null ? f(P.voice.M2.s_star, 2) : "—";
+    case "warnings": { const n = (P.issues || []).length + ((P.counts && P.counts.excluded) || []).length; return n ? String(n) : ""; }
+    default: return "";
+  }
+}
+function renderRail() {
+  const cur = route();
+  $("#rail").innerHTML = ROUTES.map((r, i) => (i === 2 || i === 8 ? '<div class="sep"></div>' : "") +
+    `<a href="#${r}" ${r === cur ? 'aria-current="page"' : ""}><span class="no">${NUM[r]}</span><span>${T().nav[r]}</span><span class="st">${esc(railStatus(r))}</span></a>`).join("");
+}
+function renderTop() {
+  $("#app-title").textContent = T().title; $("#app-sub").textContent = T().sub;
+  const pill = $("#source-pill");
+  pill.className = "pill " + (S.source === "demo" ? "demo" : "live");
+  pill.textContent = S.source === "demo" ? T().demo : T().live;
+  $("#lang-tr").setAttribute("aria-pressed", S.lang === "tr"); $("#lang-en").setAttribute("aria-pressed", S.lang === "en");
+  document.documentElement.lang = S.lang;
+  const canDl = !!S.downloads;
+  $("#dl-xlsx").hidden = !(canDl && S.xlsx); $("#dl-json").hidden = !(canDl && S.json);
+  $("#dl-xlsx").textContent = "↓ " + T().xlsx; $("#dl-json").textContent = "↓ " + T().json;
+}
+function render() {
+  renderTop(); renderRail();
+  const r = route(); const P = S.P;
+  let html;
+  if (r === "data") html = viewData();
+  else if (P && P.error) html = `<div class="notice err">${esc(P.error)}</div>` + viewData();
+  else if (P && P.stage1_only && r !== "stage1") html = `<div class="notice">${esc(S.lang === "tr" ? "Yalnızca uzman formları yüklendi: yalnız Aşama I çalıştı." : "Only expert forms were loaded: only Stage I ran.")}</div>` + viewStage1();
+  else html = ({ summary: viewSummary, stage1: viewStage1, stage2: viewStage2, stage3: viewStage3, stage4: viewStage4, voice: viewVoice, stage5: viewStage5, warnings: viewWarnings })[r]();
+  $("#view").innerHTML = html;
+  if (r === "data") bindData();
+}
+
+// ------------------------------------------------------------------ özet
+function viewSummary() {
+  const P = S.P, t = T(), lg = P.legal;
+  const ti = altIdx(P.top);
+  const adm = lg.adm.filter(Boolean).length;
+  const order = P.alts.map((a, i) => i).sort((a, b) => (P.V[b] ?? -1) - (P.V[a] ?? -1));
+  const vmax = Math.max(...P.V.filter((v) => v !== null));
+  const rows = order.filter((i) => lg.adm[i]).map((i, k) => {
+    const c = P.alts[i].code;
+    return `<div class="rrow ${k === 0 ? "first" : ""}"><span class="c" style="color:${colorOf(c)}">${c}</span>
+      <div class="bar"><span style="width:${(P.V[i] / vmax * 100).toFixed(1)}%"></span><em>${esc(altName(c))}</em></div>
+      <span class="val">${f(P.V[i])}</span></div>`;
+  }).join("");
+  const outs = P.alts.map((a, i) => i).filter((i) => !lg.adm[i]).map((i) => {
+    const c = P.alts[i].code;
+    return `<div class="rrow out"><span class="c">${c}</span><div class="bar"><em>${esc(altName(c))} · ${t.excluded(f(lg.F[i], 2), f(P.params.tau_F, 2))}</em></div><span class="val">—</span></div>`;
+  }).join("");
+  const d = P.diagnostics;
+  const v2 = P.voice.M2;
+  const bm = P.benchmarks ? Object.values(P.benchmarks.methods) : [];
+  const nSame = bm.filter((m) => m.same_top).length;
+  const oatValid = P.oat.filter((o) => o.top_changed !== null);
+  const oatSame = oatValid.filter((o) => !o.top_changed).length;
+  const lt = Object.values(P.legal_treatments); const ltSame = lt.filter((x) => !x.differs).length;
+  const fTop = P.dirichlet ? P.dirichlet.f[ti] : null;
+  const chip = (ok) => `<span class="chip ${ok ? "ok" : "warn"}">${ok ? "✓" : "!"}</span>`;
+  return `
+  <section class="hero card">
+    <div class="verdict">
+      <span class="k eq">${t.summaryTitle}</span>
+      <span class="code">${esc(P.top || "—")}</span>
+      <span class="name">${esc(P.top ? altName(P.top) : "")}</span>
+      <p class="def">${esc(ti < 0 ? "" : S.lang === "tr" ? P.alts[ti].definition : (EN_DEFS[P.top] || ""))}</p>
+      <div class="facts">
+        <span class="pill">${t.facts.V}: ${f(P.V[ti])}</span>
+        <span class="pill">${t.facts.alpha}: ${f(lg.alpha[ti])}</span>
+        <span class="pill">${t.facts.adm}: ${t.of(adm, P.alts.length)}</span>
+      </div>
+      ${P.tie ? `<div class="notice">${t.tie}</div>` : ""}
+    </div>
+    <div class="rank" aria-label="${t.rankTitle}">
+      <h3>${t.rankTitle}</h3>
+      ${rows}
+      ${outs ? `<div class="gate">${t.gateLine}</div>${outs}` : ""}
+      <p class="eq">${t.rankNote}</p>
+    </div>
+  </section>
+  <section class="tiles">
+    <div class="tile"><span class="k">${t.tiles.lps}</span><span class="v">${pct(d.M2.LPS)}</span><span class="d">${t.lpsD(pct(d.M1.LPS), pct(d.M2.LPS))}</span><span class="eq">${eqL("23")}</span></div>
+    <div class="tile"><span class="k">${t.tiles.cb}</span><span class="v">${f(d.M2.C_beta, 2)}</span><span class="d">${t.cbD(f(d.M1.C_beta, 2), f(d.M2.C_beta, 2))}</span><span class="eq">${eqL("24")}</span></div>
+    <div class="tile"><span class="k">${t.tiles.cop}</span><span class="v">${pct(d.CoP)}</span><span class="d">${t.copD}</span><span class="eq">${eqL("25")}</span></div>
+    <div class="tile"><span class="k">${t.tiles.voice}</span><span class="v">${v2.s_star !== null ? f(v2.s_star, 2) : t.voiceNone(f(P.params.voice_s_max, 2))}</span><span class="d">${t.voiceD(f(P.L_share, 3), esc(v2.i_L || "—"), v2.s_stable !== null && v2.s_stable !== undefined ? f(v2.s_stable, 2) : t.voiceNone(f(P.params.voice_s_max, 2)), pct(v2.share))}</span><span class="eq">${eqL("26–28", true)}</span></div>
+  </section>
+  <section class="card">
+    <h3>${t.robust}</h3>
+    <table><tbody>
+      <tr><td>${chip(nSame === bm.length)}</td><td>${t.rb.bench}</td><td class="n">${t.of(nSame, bm.length)}</td></tr>
+      <tr><td>${chip(fTop === null || fTop >= .5)}</td><td>${t.rb.dir}</td><td class="n">${fTop === null ? t.none : pct(fTop)}</td></tr>
+      <tr><td>${chip(oatSame === oatValid.length)}</td><td>${t.rb.oat}</td><td class="n">${t.of(oatSame, oatValid.length)}</td></tr>
+      <tr><td>${chip(ltSame === lt.length)}</td><td>${t.rb.legal}</td><td class="n">${t.of(ltSame, lt.length)}</td></tr>
+    </tbody></table>
+  </section>`;
+}
+
+// ------------------------------------------------------------------ veri
+function classify(name) { return /^U\d+_/.test(name) ? "U" : /^H\d+_/.test(name) ? "H" : /^K\d+_/.test(name) ? "K" : "?"; }
+function viewData() {
+  const t = T(), p = S.params;
+  const c = { U: 0, H: 0, K: 0, "?": 0 }; S.files.forEach((x) => c[classify(x.name)]++);
+  const engMsg = { idle: t.eng.idle, booting: t.eng.booting, pkgs: t.eng.pkgs, ready: t.eng.ready, running: t.eng.running, fail: t.eng.fail, done: S.engineMsg }[S.engine] || "";
+  const opt = (v, cur, lab) => `<option value="${v}" ${String(v) === String(cur) ? "selected" : ""}>${lab}</option>`;
+  return `
+  <section class="card">
+    <h2>${t.dataTitle}</h2>
+    <p class="lede">${t.dataLede}</p>
+    <div class="drop" id="drop">
+      <strong>${t.drop}</strong>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <label class="btn" for="file-in">${t.choose}</label>
+        <input id="file-in" type="file" accept=".xlsx" multiple hidden>
+        <button class="btn" id="use-demo" type="button">${t.useDemo}</button>
+      </div>
+      <span class="log" id="file-count">${S.files.length ? t.files(c.U, c.H, c.K, c["?"]) : ""}</span>
+    </div>
+    <div style="display:grid;gap:6px">
+      <h3>${t.blankTitle}</h3>
+      <p class="lede">${t.blankText}</p>
+      <div>${S.downloads ? `<button class="btn" id="dl-blank" type="button">${t.blankBtn}</button>` : `<span class="log">${t.blankNo}</span>`}</div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>${t.params}</h3>
+    <div class="form">
+      <label for="p-tau">${t.p.tau}<input id="p-tau" type="number" min="0.05" max="1" step="0.05" value="${p.tau_F}"><small>${t.p.tauS}</small></label>
+      <label for="p-theta">${t.p.theta}<input id="p-theta" type="number" min="0" max="1" step="0.1" value="${p.theta}"><small>${t.p.thetaS}</small></label>
+      <label for="p-pi">${t.p.pi}<input id="p-pi" type="number" min="0" max="100" step="5" value="${p.gamma_percentile}"><small>${t.p.piS}</small></label>
+      <label for="p-delta">${t.p.delta}<input id="p-delta" type="number" min="0" max="2" step="0.05" value="${p.delta}"><small>${t.p.deltaS}</small></label>
+      <label for="p-power">${t.p.power}<select id="p-power">${["base", "concave", "convex"].map((k) => opt(k, p.power_mapping, t.pm[k])).join("")}</select><small>${t.p.powerS}</small></label>
+      <label for="p-draws">${t.p.draws}<select id="p-draws">${[0, 500, 1000, 2000, 5000, 10000].map((k) => opt(k, p.draws, nf(0).format(k))).join("")}</select><small>${t.p.drawsS}</small></label>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn primary" id="run" type="button" ${S.files.length && !["booting", "pkgs", "running"].includes(S.engine) ? "" : "disabled"}>${S.source === "uploaded" ? t.rerun : t.run}</button>
+      <span class="log" id="eng-msg">${esc(engMsg)}</span>
+    </div>
+    <div class="progress" aria-hidden="true"><span id="prog" style="width:${S.progress}%"></span></div>
+    ${S.error ? `<div class="notice err">${esc(S.error)}</div>` : ""}
+    ${S.slow ? `<div class="notice">${S.lang === "tr" ? "Motor 2 dakikadan uzun süredir yükleniyor. Aşağıdaki tanı satırlarını bize iletin." : "The engine has been loading for more than 2 minutes. Please send us the diagnostic lines below."}</div>` : ""}
+    ${(S.diag && S.diag.length) ? `<pre class="log" id="diag" style="white-space:pre-wrap;margin:0">${esc(S.diag.join("\n"))}</pre>` : `<pre class="log" id="diag" style="white-space:pre-wrap;margin:0"></pre>`}
+  </section>`;
+}
+function bindData() {
+  const inp = $("#file-in"), drop = $("#drop");
+  const take = async (list) => {
+    const arr = [];
+    for (const file of list) if (/\.xlsx$/i.test(file.name)) arr.push({ name: file.name, buf: await file.arrayBuffer() });
+    S.files = arr; S.filesAreDemo = false; render();
+  };
+  inp.addEventListener("change", () => take(inp.files));
+  drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+  drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); take(e.dataTransfer.files); });
+  $("#use-demo").addEventListener("click", () => {
+    S.files = Object.entries(DEMO_FORMS).map(([name, b]) => ({ name, buf: b64ToBytes(b).buffer })); S.filesAreDemo = true; runEngine();
+  });
+  const num = (id, key) => $(id).addEventListener("change", (e) => { S.params[key] = parseFloat(e.target.value); });
+  num("#p-tau", "tau_F"); num("#p-theta", "theta"); num("#p-pi", "gamma_percentile"); num("#p-delta", "delta");
+  $("#p-power").addEventListener("change", (e) => { S.params.power_mapping = e.target.value; });
+  $("#p-draws").addEventListener("change", (e) => { S.params.draws = parseInt(e.target.value, 10); });
+  $("#run").addEventListener("click", runEngine);
+  const bb = $("#dl-blank"); if (bb) bb.addEventListener("click", () => save("DSS_Bos_Formlar.zip", b64ToBytes(BLANK_ZIP)));
+}
+
+// ------------------------------------------------------------------ motor (Web Worker + Pyodide)
+let worker = null, bootPromise = null;
+function setEngine(state, msg) { S.engine = state; if (msg !== undefined) S.engineMsg = msg; const el = $("#eng-msg"); if (el) { const t = T(); el.textContent = state === "done" ? S.engineMsg : ({ idle: t.eng.idle, booting: t.eng.booting, pkgs: t.eng.pkgs, ready: t.eng.ready, running: t.eng.running, fail: t.eng.fail })[state]; } const b = $("#run"); if (b) b.disabled = ["booting", "pkgs", "running"].includes(state) || !S.files.length; }
+function setProgress(p) { S.progress = p; const el = $("#prog"); if (el) el.style.width = p + "%"; }
+function bootEngine() {
+  if (bootPromise) return bootPromise;
+  bootPromise = new Promise((resolve, reject) => {
+    try { worker = new Worker("worker.js"); }
+    catch (err) { reject(err); return; }
+    worker.onerror = (e) => { reject(new Error(e.message || "worker")); };
+    worker.onmessage = (e) => {
+      const m = e.data;
+      if (m.type === "diag") { S.diag.push(m.text); const el = $("#diag"); if (el) el.textContent = S.diag.join("\n"); return; }
+      if (m.type === "status" && m.key === "pkgs") { setEngine("pkgs"); setProgress(35); }
+      if (m.type === "status" && m.key === "ready") { setEngine("ready"); setProgress(55); resolve(); }
+      if (m.type === "error" && S.engine !== "running") reject(new Error(m.text));
+      handleRunMessage(m);
+    };
+    setEngine("booting"); setProgress(10);
+    S.diag = []; S.bootStart = Date.now();
+    setTimeout(() => { if (["booting", "pkgs"].includes(S.engine)) { S.slow = true; render(); } }, 120000);
+    worker.postMessage({ type: "boot", files: PY_FILES, wheels: WHEELS });
+  });
+  bootPromise.catch(() => { bootPromise = null; });
+  return bootPromise;
+}
+let t0 = 0;
+function handleRunMessage(m) {
+  if (S.engine !== "running") return;
+  if (m.type === "progress") { const mm = m.text.match(/(\d+)\/(\d+)/); if (mm) setProgress(60 + 38 * (+mm[1] / +mm[2])); }
+  if (m.type === "error") { S.error = m.text; setEngine("fail"); render(); }
+  if (m.type === "result") {
+    const P = JSON.parse(m.json);
+    if (P.error) { S.error = P.error; setEngine("ready"); render(); return; }
+    S.P = P; S.source = S.filesAreDemo ? "demo" : "uploaded"; S.error = null;
+    S.xlsx = m.xlsx || null; S.json = m.js || null;
+    setProgress(100); setEngine("done", T().eng.done(f((performance.now() - t0) / 1000, 1)));
+    location.hash = "#summary"; render();
+  }
+}
+async function runEngine() {
+  if (!S.files.length) return;
+  S.error = null; t0 = performance.now();
+  try { await bootEngine(); }
+  catch (err) { S.error = T().eng.fail + " (" + (err.message || err) + ")"; setEngine("fail"); render(); return; }
+  setEngine("running"); setProgress(60);
+  const p = S.params;
+  worker.postMessage({ type: "run", files: S.files.map((x) => ({ name: x.name, buf: x.buf.slice(0) })), draws: p.draws, source: S.filesAreDemo ? "demo" : "uploaded",
+    params: { tau_F: p.tau_F, theta: p.theta, gamma_percentile: p.gamma_percentile, delta: p.delta, power_mapping: p.power_mapping } });
+}
+
+// ------------------------------------------------------------------ Aşama I
+function viewStage1() {
+  const P = S.P, t = T();
+  if (!P.stage1) return `<section class="card"><h2>${t.stage1Title}</h2><p>${t.stage1None}</p></section>`;
+  const name = (q) => { const a = (P.alts || []).find((x) => x.code === q) || (P.crits || []).find((x) => x.code === q); return nm(q, a && a.name); };
+  return `<section class="card"><h2>${t.stage1Title}</h2>
+  <div class="scroll"><table><thead><tr>${t.s1h.map((h, i) => `<th class="${i ? "n" : ""}">${h}</th>`).join("")}</tr></thead><tbody>
+  ${P.stage1.map((x) => `<tr><td><strong>${x.item}</strong> ${esc(name(x.item))}</td><td class="n">${x.N}</td><td class="n">${x.NE}</td><td class="n">${f(x.CVR)}</td><td class="n">${x.NE_crit ?? "—"}</td><td class="n">${f(x.CVR_crit)}</td>
+    <td class="n"><span class="chip ${x.retained ? "ok" : "warn"}">${x.retained ? t.keep : t.review}</span></td></tr>`).join("")}
+  </tbody></table></div></section>`;
+}
+
+// ------------------------------------------------------------------ Aşama II
+function viewStage2() {
+  const P = S.P, t = T(), lg = P.legal;
+  const reqChips = P.reqs.map((q, r) => `<div class="tile"><span class="k">${q.code}</span><span class="d">${esc(q.source)}</span>
+    <span class="chip ${lg.rmask[r] ? "ok" : "mute"}">${lg.rmask[r] ? t.inR : t.outR}</span><span class="eq">${t.noSay(lg.no[r])}</span></div>`).join("");
+  const cell = (i, r) => { const F = lg.Fbar[i][r]; const tone = F >= P.params.tau_F ? "var(--bad)" : F >= .5 ? "var(--warn)" : "inherit";
+    return `<td class="n" style="${lg.rmask[r] ? "" : "opacity:.45"}">${f(lg.Tbar[i][r], 2)} / ${f(lg.Ibar[i][r], 2)} / <span style="color:${tone};font-weight:600">${f(F, 2)}</span></td>`; };
+  return `<section class="card"><h2>${t.stage2Title}</h2>
+    <h3>${t.rstar}</h3><p class="lede">${t.rstarNote(lg.H)}</p>
+    <div class="tiles" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${reqChips}</div></section>
+  <section class="card"><h3>${t.tifTitle}</h3><div class="scroll"><table><thead><tr><th></th>${P.reqs.map((q) => `<th class="n">${q.code}</th>`).join("")}</tr></thead><tbody>
+    ${P.alts.map((a, i) => `<tr><td><strong>${a.code}</strong> ${esc(altName(a.code))}</td>${P.reqs.map((q, r) => cell(i, r)).join("")}</tr>`).join("")}
+  </tbody></table></div></section>
+  <section class="card"><h3>${t.aggTitle}</h3><div class="scroll"><table><thead><tr>${t.aggH.map((h, i) => `<th class="${i ? "n" : ""}">${h}</th>`).join("")}</tr></thead><tbody>
+    ${P.alts.map((a, i) => `<tr><td><strong>${a.code}</strong> ${esc(altName(a.code))}</td><td class="n">${f(lg.T[i])}</td><td class="n">${f(lg.I[i])}</td><td class="n">${f(lg.F[i])}</td>
+      <td class="n"><span class="chip ${lg.adm[i] ? "ok" : "bad"}">${lg.adm[i] ? t.admitted : t.excl}</span></td><td class="n">${f(lg.alpha[i])}</td></tr>`).join("")}
+  </tbody></table></div><p class="eq">τ_F = ${f(P.params.tau_F, 2)}, θ = ${f(P.params.theta, 2)}</p></section>`;
+}
+
+// ------------------------------------------------------------------ Aşama III
+function viewStage3() {
+  const P = S.P, t = T();
+  const wmax = Math.max(...P.dms.flatMap((d) => d.w));
+  const heat = (v, mx) => `background:color-mix(in srgb, var(--accent) ${Math.round(v / mx * 55)}%, transparent)`;
+  const head = `<tr>${t.dmH.map((h, i) => `<th class="${i === 3 ? "n" : ""}">${h}</th>`).join("")}${P.crits.map((c) => `<th class="n" title="${esc(nm(c.code, c.name))}">${c.code}${c.type === "cost" ? "⁻" : ""}</th>`).join("")}</tr>`;
+  const wrows = P.dms.map((d) => `<tr class="${d.L ? "Lrow" : ""}"><td><strong>${d.code}</strong></td><td>${esc(nm(d.group, d.group))}</td><td>${esc(nm(d.level, d.level))}</td><td class="n">${f(d.p, 1)}</td>
+    ${d.w.map((v) => `<td class="n" style="${heat(v, wmax)}">${f(v, 3)}</td>`).join("")}</tr>`).join("");
+  const umax = Math.max(...P.dms.flatMap((d) => d.u));
+  const urows = P.dms.map((d) => `<tr class="${d.L ? "Lrow" : ""}"><td><strong>${d.code}</strong></td>${d.u.map((v) => `<td class="n" style="${heat(v, umax)}">${f(v, 3)}</td>`).join("")}</tr>`).join("");
+  const crrows = P.dms.flatMap((d) => d.blocks.map((b) => `<tr><td>${d.code}</td><td>${b.block === "dim" ? (S.lang === "tr" ? "Boyutlar" : "Dimensions") : b.block}</td><td class="n">${f(b.a_BW, 0)}</td><td class="n">${f(b.CR)}</td><td class="n">${b.thr === null ? "—" : f(b.thr, 4)}</td>
+    <td class="n"><span class="chip ${b.flag ? "warn" : "ok"}">${b.flag ? t.over : t.within}</span></td></tr>`)).join("");
+  return `<section class="card"><h2>${t.stage3Title}</h2><h3>${t.wTitle}</h3><p class="eq">${t.wNote}</p>
+    <div class="scroll"><table><thead>${head}</thead><tbody>${wrows}</tbody></table></div></section>
+  <section class="grid2">
+    <div class="card"><h3>${t.uTitle}</h3><div class="scroll"><table><thead><tr><th></th>${P.alts.map((a) => `<th class="n">${a.code}</th>`).join("")}</tr></thead><tbody>${urows}</tbody></table></div></div>
+    <div class="card"><h3>${t.crTitle}</h3><p class="eq">${t.crNote}</p><div class="scroll" style="max-height:520px"><table><thead><tr>${t.crH.map((h, i) => `<th class="${i > 1 ? "n" : ""}">${h}</th>`).join("")}</tr></thead><tbody>${crrows}</tbody></table></div></div>
+  </section>`;
+}
+
+// ------------------------------------------------------------------ Aşama IV
+function viewStage4() {
+  const P = S.P, t = T(), d = P.diagnostics;
+  const nL = P.dms.filter((x) => x.L).length;
+  const diag = ["M0", "M1", "M2"].map((m) => `<tr class="${m === "M2" ? "hl" : ""}"><td>${t.models[m]}</td><td class="n">${f(d[m].total_burden)}</td><td class="n">${f(d[m].weighted_burden)}</td><td class="n">${pct(d[m].LPS)}</td><td class="n">${f(d[m].C_beta, 3)}</td></tr>`).join("");
+  const bmax = Math.max(...["M0", "M1", "M2"].flatMap((m) => P.models[m].beta), 1e-9);
+  const brows = P.dms.map((x, k) => `<tr class="${x.L ? "Lrow" : ""}"><td><strong>${x.code}</strong></td><td>${esc(nm(x.level, x.level))}</td><td class="n">${f(x.omega, 3)}</td>
+    <td style="min-width:160px"><div class="mini">${["M0", "M1", "M2"].map((m) => `<div class="b ${m.toLowerCase()}" style="width:${Math.max(1, P.models[m].beta[k] / bmax * 100).toFixed(1)}%" title="${m}: ${f(P.models[m].beta[k])}"></div>`).join("")}</div></td>
+    <td class="n">${f(P.models.M0.beta[k])}</td><td class="n">${f(P.models.M1.beta[k])}</td><td class="n">${f(P.models.M2.beta[k])}</td></tr>`).join("");
+  const ucrows = ["M0", "M1", "M2"].map((m) => `<tr class="${m === "M2" ? "hl" : ""}"><td>${m}</td>${P.models[m].uc.map((v) => `<td class="n">${f(v)}</td>`).join("")}</tr>`).join("");
+  return `<section class="card"><h2>${t.stage4Title}</h2><p class="lede">${t.s4Lede(f(P.gamma, 4), nL)}</p>
+    <div class="scroll"><table><thead><tr>${t.diagH.map((h, i) => `<th class="${i ? "n" : ""}">${h}</th>`).join("")}</tr></thead><tbody>${diag}</tbody></table></div>
+    <p class="eq">CoP = ${pct(d.CoP)} · Z₀ = ${f(P.Z0)} · β_L0 = ${f(P.beta_L0)}</p></section>
+  <section class="card"><h3>${t.burdenTitle}</h3>
+    <div class="legend"><span><i style="background:color-mix(in srgb, var(--ink) 30%, transparent)"></i>M0</span><span><i style="background:color-mix(in srgb, var(--warn) 80%, transparent)"></i>M1</span><span><i style="background:var(--accent)"></i>M2</span><span><i style="background:var(--warn);width:3px"></i>L</span></div>
+    <div class="scroll"><table><thead><tr><th>${t.dmH[0]}</th><th>${t.dmH[2]}</th><th class="n">ω_k</th><th></th><th class="n">β M0</th><th class="n">β M1</th><th class="n">β M2</th></tr></thead><tbody>${brows}</tbody></table></div></section>
+  <section class="card"><h3>${t.ucTitle}</h3><div class="scroll"><table><thead><tr><th></th>${P.alts.map((a) => `<th class="n">${a.code}</th>`).join("")}</tr></thead><tbody>${ucrows}</tbody></table></div></section>`;
+}
+
+// ------------------------------------------------------------------ ses eşiği
+function viewVoice() {
+  const P = S.P, t = T(), g = P.grid;
+  const W = 760, H = 170, x0 = 52, x1 = W - 16, rowsY = { M2: 34, M1: 86 }, hRow = 34;
+  const sx = (s) => x0 + (x1 - x0) * (s / g[g.length - 1]);
+  const cw = (x1 - x0) / g.length;
+  let cells = "";
+  for (const m of ["M2", "M1"]) {
+    const tops = P.voice[m].tops || [];
+    tops.forEach((c, k) => { cells += `<rect x="${(sx(g[k]) - cw / 2).toFixed(1)}" y="${rowsY[m]}" width="${(cw + .6).toFixed(1)}" height="${hRow}" fill="${colorOf(c)}"><title>${m} · s = ${f(g[k], 2)} · ${c}</title></rect>`; });
+    cells += `<text x="${x0 - 8}" y="${rowsY[m] + hRow / 2 + 4}" text-anchor="end">${t.voiceRows[m]}</text>`;
+    const ss = P.voice[m].s_star; if (ss !== null) cells += `<path d="M${sx(ss).toFixed(1)} ${rowsY[m] - 4} l-5 -7 h10 z" fill="var(--ink)"><title>s*</title></path>`;
+    const st = P.voice[m].s_stable; if (st !== null && st !== undefined) cells += `<path d="M${sx(st).toFixed(1)} ${rowsY[m] - 4} l-5 -7 h10 z" fill="none" stroke="var(--ink)"><title>s^st</title></path>`;
+  }
+  const ticks = [0, .1, .2, .3, .4, .5, .6].filter((v) => v <= g[g.length - 1] + 1e-9).map((v) => `<line class="axis" x1="${sx(v)}" x2="${sx(v)}" y1="124" y2="128"/><text x="${sx(v)}" y="140" text-anchor="middle">${f(v, 1)}</text>`).join("");
+  const now = P.L_share; const nowLine = now <= g[g.length - 1] ? `<line x1="${sx(now)}" x2="${sx(now)}" y1="22" y2="124" stroke="var(--ink)" stroke-dasharray="3 3"/><text x="${sx(now) + 4}" y="18">${t.nowMark} ${f(now, 3)}</text>` : "";
+  const used = [...new Set([...(P.voice.M2.tops || []), ...(P.voice.M1.tops || [])])].sort();
+  const gt = t.voiceNone(f(g[g.length - 1], 2));
+  const sv = (x) => (x === null || x === undefined) ? gt : f(x, 2);
+  const vtab = `<div class="scroll"><table><thead><tr>${t.voiceH.map((h, i) => `<th class="${i > 1 ? "n" : ""}">${h}</th>`).join("")}</tr></thead><tbody>
+    ${["M2", "M1"].map((m) => `<tr class="${m === "M2" ? "hl" : ""}"><td>${t.models[m]}</td><td>${esc(P.voice[m].i_L || "—")}</td><td class="n">${sv(P.voice[m].s_star)}</td><td class="n">${sv(P.voice[m].s_stable)}</td><td class="n">${pct(P.voice[m].share)}</td></tr>`).join("")}</tbody></table></div>`;
+  return `<section class="card"><h2>${t.voiceTitle}</h2>
+    <p class="lede">${t.voiceLede(`<strong>${esc(P.voice.M2.i_L || "—")}</strong> ${esc(P.voice.M2.i_L ? altName(P.voice.M2.i_L) : "")}`, f(now, 3))}</p>
+    ${vtab}
+    <div class="scroll"><svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${t.voiceTitle}">${cells}<line class="axis" x1="${x0}" x2="${x1}" y1="124" y2="124"/>${ticks}${nowLine}
+      <text x="${(x0 + x1) / 2}" y="${H - 4}" text-anchor="middle">${t.voiceAxis}</text></svg></div>
+    <div class="legend">${used.map((c) => `<span><i style="background:${colorOf(c)}"></i>${c} ${esc(altName(c))}</span>`).join("")}<span>▼ s*</span><span>▽ s^st</span></div>
+    ${P.voice.M2.note ? `<div class="notice">${esc(P.voice.M2.note)}</div>` : ""}</section>`;
+}
+
+// ------------------------------------------------------------------ Aşama V
+function viewStage5() {
+  const P = S.P, t = T();
+  let bench = "";
+  if (P.benchmarks) {
+    const B = P.benchmarks, names = Object.keys(B.methods);
+    bench = `<section class="card"><h2>${t.stage5Title}</h2><h3>${t.benchTitle}</h3><p class="eq">${t.benchNote(B.ref_top)}</p>
+      <div class="scroll"><table><thead><tr><th></th><th class="n">${t.ref}</th>${names.map((n) => `<th class="n">${n}</th>`).join("")}</tr></thead><tbody>
+      ${B.alts.map((c, i) => `<tr class="${c === B.ref_top ? "hl" : ""}"><td><strong>${c}</strong> ${esc(altName(c))}</td><td class="n">${f(B.ref_rank[i], 1)}</td>${names.map((n) => `<td class="n">${f(B.methods[n].rank[i], 1)}</td>`).join("")}</tr>`).join("")}
+      <tr><td>${t.sameTop}</td><td></td>${names.map((n) => `<td class="n"><span class="chip ${B.methods[n].same_top ? "ok" : "warn"}">${B.methods[n].same_top ? t.yes : t.no}</span></td>`).join("")}</tr>
+      <tr><td>${t.spearman}</td><td></td>${names.map((n) => `<td class="n">${f(B.methods[n].spearman, 3)}</td>`).join("")}</tr>
+      </tbody></table></div></section>`;
+  }
+  const lt = Object.entries(P.legal_treatments).map(([k, v]) => `<tr><td>${esc(nm(k, k))}</td><td class="n">${esc(v.top || "—")}</td><td class="n"><span class="chip ${v.differs ? "warn" : "ok"}">${v.differs ? t.yes : t.no}</span></td><td class="n"><span class="chip ${v.excluded_first ? "bad" : "ok"}">${v.excluded_first ? t.yes : t.no}</span></td></tr>`).join("");
+  let dir = `<p>${t.dirNone}</p>`;
+  if (P.dirichlet) dir = `<div class="rank">${P.alts.map((a, i) => `<div class="rrow"><span class="c" style="color:${colorOf(a.code)}">${a.code}</span><div class="bar"><span style="width:${(P.dirichlet.f[i] * 100).toFixed(1)}%"></span><em>${esc(altName(a.code))}</em></div><span class="val">${pct(P.dirichlet.f[i])}</span></div>`).join("")}</div>`;
+  const oat = P.oat.map((o) => `<tr class="${o.top_changed ? "hl" : ""}"><td>${esc(nm(o.test, o.test))}</td><td>${esc(typeof o.setting === "number" ? f(o.setting, 2) : nm(o.setting, o.setting))}</td><td class="n">${esc(o.top || "—")}</td>
+    <td class="n">${o.top_changed === null ? "—" : `<span class="chip ${o.top_changed ? "warn" : "ok"}">${o.top_changed ? t.yes : t.no}</span>`}</td><td class="n">${f(o.spearman, 3)}</td></tr>`).join("");
+  return `${bench || `<section class="card"><h2>${t.stage5Title}</h2></section>`}
+  <section class="grid2">
+    <div class="card"><h3>${t.legalTitle}</h3><div class="scroll"><table><thead><tr>${t.legalH.map((h, i) => `<th class="${i ? "n" : ""}">${h}</th>`).join("")}</tr></thead><tbody>${lt}</tbody></table></div></div>
+    <div class="card"><h3>${P.dirichlet ? t.dirTitle(nf(0).format(P.dirichlet.Y)) : t.dirTitle("—")}</h3>${dir}</div>
+  </section>
+  <section class="card"><h3>${t.oatTitle}</h3><div class="scroll" style="max-height:560px"><table><thead><tr>${t.oatH.map((h, i) => `<th class="${i > 1 ? "n" : ""}">${h}</th>`).join("")}</tr></thead><tbody>${oat}</tbody></table></div></section>`;
+}
+
+// ------------------------------------------------------------------ uyarılar
+function viewWarnings() {
+  const P = S.P, t = T();
+  const items = [...(P.issues || []).map((x) => esc(x)), ...((P.counts && P.counts.excluded) || []).map((x) => `${t.excludedDM}: <strong>${esc(x.code)}</strong> (${esc(x.reason)})`)];
+  const blocks = (P.dms || []).flatMap((d) => d.blocks.filter((b) => b.flag).map((b) => `${d.code} · ${b.block === "dim" ? (S.lang === "tr" ? "Boyutlar" : "Dimensions") : b.block}: CR^I = ${f(b.CR)} > ${f(b.thr, 4)}`));
+  return `<section class="card"><h2>${t.warnTitle}</h2>
+    ${items.length ? `<ul>${items.map((x) => `<li>${x}</li>`).join("")}</ul>` : `<p>${t.noWarn}</p>`}
+    ${blocks.length ? `<h3>${t.crTitle}</h3><ul>${blocks.map((x) => `<li>${x}</li>`).join("")}</ul>` : ""}</section>`;
+}
+
+// ------------------------------------------------------------------ başlat
+$("#lang-tr").addEventListener("click", () => { S.lang = "tr"; try { localStorage.setItem("dss-lang", "tr"); } catch (_) {} render(); });
+$("#lang-en").addEventListener("click", () => { S.lang = "en"; try { localStorage.setItem("dss-lang", "en"); } catch (_) {} render(); });
+window.addEventListener("hashchange", () => { render(); $("#view").focus({ preventScroll: true }); window.scrollTo(0, 0); });
+async function save(name, bytes) {
+  if (!S.downloads || !bytes) return;
+  try { await S.downloads.save({ filename: name, data: bytes.slice(0) }); } catch (e) { /* izleyici reddetti ya da kullanılamıyor */ }
+}
+$("#dl-xlsx").addEventListener("click", () => save(S.source === "demo" ? "DSS_Rapor_ornek.xlsx" : "DSS_Rapor.xlsx", S.xlsx));
+$("#dl-json").addEventListener("click", () => save(S.source === "demo" ? "DSS_Ozet_ornek.json" : "DSS_Ozet.json", S.json));
+render();
+if (/[?&]selftest\b/.test(location.search)) {
+  S.params.draws = 0;
+  S.files = Object.entries(DEMO_FORMS).map(([name, b]) => ({ name, buf: b64ToBytes(b).buffer })); S.filesAreDemo = true;
+  location.hash = "#data"; runEngine();
+  const iv = setInterval(() => {
+    if (S.engine === "done") { document.title = "SELFTEST OK " + S.P.top + " " + JSON.stringify(S.P.voice.M2.s_star) + " " + S.engineMsg; clearInterval(iv); }
+    if (S.engine === "fail" || S.error) { document.title = "SELFTEST FAIL " + (S.error || ""); clearInterval(iv); }
+  }, 500);
+}
+// claude.ai içinde indirme yeteneği; başka bir sunucuda (ör. GitHub Pages) tarayıcının olağan indirmesi.
+const anchorDownloads = { save: async ({ filename, data }) => {
+  const url = URL.createObjectURL(new Blob([data])); const a = document.createElement("a");
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+} };
+(function wireDownloads(tries) {
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("downloads").then((d) => { S.downloads = d; render(); }).catch(() => {});
+  } else if (tries > 0) setTimeout(() => wireDownloads(tries - 1), 500);
+  else { S.downloads = anchorDownloads; render(); }
+})(10);
+</script>
+</body>
+</html>

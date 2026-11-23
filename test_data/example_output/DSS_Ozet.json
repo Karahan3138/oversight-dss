@@ -1,0 +1,683 @@
+{
+ "K": 18,
+ "H": 3,
+ "excluded_dms": [],
+ "admissible": [
+  "A2",
+  "A3",
+  "A4",
+  "A5",
+  "A6",
+  "A7"
+ ],
+ "alpha": {
+  "A1": 0.0,
+  "A2": 0.525,
+  "A3": 0.53125,
+  "A4": 0.7500000000000001,
+  "A5": 0.6875,
+  "A6": 0.8125,
+  "A7": 0.7647058823529412
+ },
+ "V": {
+  "A1": null,
+  "A2": 0.21652385110046857,
+  "A3": 0.23917463977654352,
+  "A4": 0.37530502258137544,
+  "A5": 0.39424305552972,
+  "A6": 0.40206590158310473,
+  "A7": 0.44582345443094046
+ },
+ "top": "A7",
+ "gamma": 0.9417794677831971,
+ "diagnostics": {
+  "M1": {
+   "LPS": 0.6961609048007676,
+   "C_beta": -0.4559369339095082,
+   "total_burden": 4.327398714257777,
+   "weighted_burden": 1.6084441883535252
+  },
+  "M0": {
+   "LPS": 0.6737255336891537,
+   "C_beta": -0.38607666795571965,
+   "total_burden": 4.194741862988982,
+   "weighted_burden": 1.6976276385339237
+  },
+  "M2": {
+   "LPS": 0.6730304551186479,
+   "C_beta": -0.39299213680044587,
+   "total_burden": 4.199073662073536,
+   "weighted_burden": 1.6851538566999449
+  },
+  "CoP": 0.047691843398646676
+ },
+ "voice": {
+  "M2": {
+   "i_L": "A6",
+   "s_star": 0.29,
+   "s_stable": 0.29,
+   "share": 0.5245901639344263
+  },
+  "M1": {
+   "i_L": "A6",
+   "s_star": 0.29,
+   "s_stable": 0.29,
+   "share": 0.5245901639344263
+  }
+ },
+ "dirichlet": {
+  "A1": 0.0,
+  "A2": 0.0,
+  "A3": 0.0,
+  "A4": 0.0,
+  "A5": 0.0,
+  "A6": 0.0098,
+  "A7": 0.9902
+ },
+ "benchmarks": {
+  "TOPSIS": {
+   "top": "A4",
+   "same_top": false,
+   "spearman": 0.6
+  },
+  "VIKOR": {
+   "top": "A5",
+   "same_top": false,
+   "spearman": 0.8857142857142858
+  },
+  "WASPAS": {
+   "top": "A5",
+   "same_top": false,
+   "spearman": 0.8857142857142858
+  },
+  "CoCoSo": {
+   "top": "A7",
+   "same_top": true,
+   "spearman": 0.942857142857143
+  },
+  "MABAC": {
+   "top": "A7",
+   "same_top": true,
+   "spearman": 1.0
+  },
+  "ARLON": {
+   "top": "A5",
+   "same_top": false,
+   "spearman": 0.8857142857142858
+  }
+ },
+ "legal_treatments": {
+  "Tarama yok": {
+   "top": "A7",
+   "differs": false,
+   "excluded_first": false
+  },
+  "Telafi edici": {
+   "top": "A7",
+   "differs": false,
+   "excluded_first": false
+  },
+  "İkili kapı": {
+   "top": "A7",
+   "differs": false,
+   "excluded_first": false
+  }
+ },
+ "oat": [
+  {
+   "test": "τ_F",
+   "setting": 0.5,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "τ_F",
+   "setting": 0.55,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "τ_F",
+   "setting": 0.6,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "τ_F",
+   "setting": 0.65,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "τ_F",
+   "setting": 0.7,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "τ_F",
+   "setting": 0.75,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.0,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.1,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.2,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.3,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.4,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.5,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.6,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.7,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.8,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 0.9,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "θ",
+   "setting": 1.0,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.8285714285714287,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "π (γ yüzdeliği)",
+   "setting": 50,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "π (γ yüzdeliği)",
+   "setting": 75,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "π (γ yüzdeliği)",
+   "setting": 90,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "δ",
+   "setting": 0.0,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "δ",
+   "setting": 0.25,
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Güç eşlemesi",
+   "setting": "concave",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Güç eşlemesi",
+   "setting": "convex",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.7714285714285715,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Grup çıkarma",
+   "setting": "BT / veri",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.7714285714285715,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Grup çıkarma",
+   "setting": "Hat yöneticisi",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Grup çıkarma",
+   "setting": "Hukuk / uyum",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Grup çıkarma",
+   "setting": "Çalışan veya çalışan temsilcisi",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.8285714285714287,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Grup çıkarma",
+   "setting": "Üst yönetim",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Grup çıkarma",
+   "setting": "İnsan kaynakları",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.8285714285714287,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K01",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K02",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K03",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K04",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K05",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K06",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K07",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K08",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K09",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K10",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K11",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K12",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K13",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K14",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K15",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K16",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K17",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Karar verici çıkarma",
+   "setting": "K18",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Tutarsız BWM çıkarma",
+   "setting": "6 karar verici",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 0.942857142857143,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  },
+  {
+   "test": "Tüm gereklilikler",
+   "setting": "R = 5",
+   "top": "A7",
+   "top_changed": false,
+   "spearman": 1.0,
+   "admissible": "A2, A3, A4, A5, A6, A7"
+  }
+ ],
+ "stage1": [
+  {
+   "item": "A1",
+   "N": 15,
+   "NE": 14,
+   "CVR": 0.8666666666666667,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "A2",
+   "N": 15,
+   "NE": 14,
+   "CVR": 0.8666666666666667,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "A3",
+   "N": 15,
+   "NE": 7,
+   "CVR": -0.06666666666666667,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": false
+  },
+  {
+   "item": "A4",
+   "N": 15,
+   "NE": 13,
+   "CVR": 0.7333333333333333,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "A5",
+   "N": 15,
+   "NE": 13,
+   "CVR": 0.7333333333333333,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "A6",
+   "N": 15,
+   "NE": 14,
+   "CVR": 0.8666666666666667,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "A7",
+   "N": 15,
+   "NE": 13,
+   "CVR": 0.7333333333333333,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "C1",
+   "N": 15,
+   "NE": 15,
+   "CVR": 1.0,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "C2",
+   "N": 15,
+   "NE": 13,
+   "CVR": 0.7333333333333333,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "C3",
+   "N": 15,
+   "NE": 12,
+   "CVR": 0.6,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "C4",
+   "N": 15,
+   "NE": 13,
+   "CVR": 0.7333333333333333,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "C5",
+   "N": 15,
+   "NE": 13,
+   "CVR": 0.7333333333333333,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "C6",
+   "N": 15,
+   "NE": 15,
+   "CVR": 1.0,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "C7",
+   "N": 15,
+   "NE": 11,
+   "CVR": 0.4666666666666667,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": false
+  },
+  {
+   "item": "C8",
+   "N": 15,
+   "NE": 13,
+   "CVR": 0.7333333333333333,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": true
+  },
+  {
+   "item": "C9",
+   "N": 15,
+   "NE": 6,
+   "CVR": -0.2,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": false
+  },
+  {
+   "item": "C10",
+   "N": 15,
+   "NE": 10,
+   "CVR": 0.3333333333333333,
+   "NE_crit": 12,
+   "CVR_crit": 0.6,
+   "retained": false
+  }
+ ]
+}

@@ -1,9 +1,12 @@
-# Check the author list and order before the first release.
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "Oversight Arrangement DSS: a decision support system for choosing human oversight of AI-supported performance appraisal"
 type: software
 version: "1.0.0"
+doi: "10.5281/zenodo.24451451"
+date-released: "2026-11-23"
+repository-code: "https://github.com/Karahan3138/oversight-dss"
+url: "https://karahan3138.github.io/oversight-dss/"
 license: MIT
 authors:
   - family-names: Kara

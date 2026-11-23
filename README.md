@@ -1,5 +1,7 @@
 # Oversight Arrangement DSS
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24451451.svg)](https://doi.org/10.5281/zenodo.24451451)
+
 A case-based decision support system (DSS) that helps an organization choose a human oversight arrangement for AI-supported performance appraisal. It combines
 
 - content validation of the candidate arrangements and criteria (Lawshe's content validity ratio with exact critical values),
@@ -10,7 +12,9 @@ A case-based decision support system (DSS) that helps an organization choose a h
 
 The method is described in the accompanying article [citation to be added]. Equation numbers in the code (`Eş.`/`Eq.`) refer to that article.
 
-**Run it in the browser:** [https://USERNAME.github.io/oversight-dss/](https://USERNAME.github.io/oversight-dss/) (no installation; the Python code runs in the browser and the forms never leave your computer).
+**Run it in the browser:** [https://karahan3138.github.io/oversight-dss/](https://karahan3138.github.io/oversight-dss/) (no installation; the Python code runs in the browser and the forms never leave your computer).
+
+**Archived version:** v1.0.0, [https://doi.org/10.5281/zenodo.24451451](https://doi.org/10.5281/zenodo.24451451)
 
 ## Use
 
@@ -92,4 +96,6 @@ Code comments are partly in Turkish.
 
 ## License and citation
 
-MIT License (see `LICENSE`). If you use the DSS, please cite the article and this software (see `CITATION.cff`).
+MIT License (see `LICENSE`). If you use the DSS, please cite the article and this software:
+
+Kara, K., Yıkılmaz, İ., & Yalçın, G. C. (2026). *Oversight Arrangement DSS: A decision support system for choosing human oversight of AI-supported performance appraisal* (Version 1.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.24451451

@@ -1,0 +1,457 @@
+{
+ "_note": "Tek kaynak: formlar (scripts/build_forms.py) ve hesaplama motoru bu dosyayı okur. Aşama I sonrası kütüphane değişirse yalnızca burası güncellenir.",
+ "alternatives": [
+  {
+   "code": "A1",
+   "name": "Tam otomasyon + açıklama",
+   "definition": "YZ değerlendirme kararını kendisi verir. İnsan incelemesi yoktur; çalışan isterse karar açıklanır."
+  },
+  {
+   "code": "A2",
+   "name": "YZ önerir, yönetici karar verir",
+   "definition": "YZ bir değerlendirme önerir, son kararı yönetici verir. Biçimsel bir itiraz kanalı yoktur."
+  },
+  {
+   "code": "A3",
+   "name": "Danışma nitelikli itiraz",
+   "definition": "A2'ye ek olarak çalışan hat yöneticisine itiraz edebilir; ancak itirazın sonucu bağlayıcı değildir."
+  },
+  {
+   "code": "A4",
+   "name": "Bağlayıcı itiraz",
+   "definition": "A2'ye ek olarak çalışan hat yöneticisine itiraz edebilir; yönetici yazılı ve gerekçeli karar verir, karar bağlayıcıdır."
+  },
+  {
+   "code": "A5",
+   "name": "Bağımsız inceleyici",
+   "definition": "İtirazı, çalışanın hiyerarşik hattı dışındaki, yetkin ve yetkili bir inceleyici bağlayıcı olarak karara bağlar; kararı düzeltebilir ve zararı giderebilir."
+  },
+  {
+   "code": "A6",
+   "name": "Karma kurul",
+   "definition": "İtirazı yönetim ve çalışan temsilcisinden oluşan bir kurul bağlayıcı olarak karara bağlar; temsilcinin oyu vardır. Çalışan temsilcilerine sistem hakkında danışılır."
+  },
+  {
+   "code": "A7",
+   "name": "Sistem denetimi",
+   "definition": "A4'e ek olarak sistem kullanılmadan önce etki değerlendirmesi yapılır, kararlardan düzenli örneklem denetlenir ve sistem temsilcilerin katılımıyla dönemsel olarak değerlendirilir."
+  }
+ ],
+ "criteria": [
+  {
+   "code": "C1",
+   "name": "Usul adaleti",
+   "type": "benefit",
+   "definition": "Çalışanın karar öncesinde ve inceleme sırasında görüş bildirebilmesi, kuralların tutarlı uygulanması, bağlamsal bilginin dikkate alınması ve saygın muamele.",
+   "dimension": "D1"
+  },
+  {
+   "code": "C2",
+   "name": "İtiraz edilebilirlik",
+   "type": "benefit",
+   "definition": "İtiraz kanalının varlığı, bilinirliği, erişilebilirliği ve makul süresi.",
+   "dimension": "D1"
+  },
+  {
+   "code": "C3",
+   "name": "Açıklanabilirlik",
+   "type": "benefit",
+   "definition": "Bireysel karar için çalışanın anlayacağı bir gerekçe ve kişiye özgü geri bildirim.",
+   "dimension": "D1"
+  },
+  {
+   "code": "C4",
+   "name": "Düzeltme ve giderim",
+   "type": "benefit",
+   "definition": "Hatalı kararın düzeltilmesi, zararın giderilmesi (puana bağlı ücret ya da terfi etkisinin geri alınması gibi) ve hatanın sisteme geri bildirilmesi.",
+   "dimension": "D1"
+  },
+  {
+   "code": "C5",
+   "name": "Anlamlı inceleme",
+   "type": "benefit",
+   "definition": "İnceleyicinin kararı fiilen değiştirme yetkisi, ilk karardan bağımsızlığı, yetkinliği, tanımlı sorumluluğu ve açık bir inceleme standardı.",
+   "dimension": "D2"
+  },
+  {
+   "code": "C6",
+   "name": "Denetlenebilirlik",
+   "type": "benefit",
+   "definition": "Kararların ve inceleme gerekçelerinin kaydedilmesi, sistemin sonradan incelenebilmesi ve denetim kalitesinin izlenebilmesi.",
+   "dimension": "D2"
+  },
+  {
+   "code": "C7",
+   "name": "Otomasyon yanlılığı riski",
+   "type": "cost",
+   "definition": "İnceleyicinin YZ önerisini sorgulamadan onaylaması ve sorumluluğu sisteme yüklemesi riski.",
+   "dimension": "D2"
+  },
+  {
+   "code": "C8",
+   "name": "İşletim yükü",
+   "type": "cost",
+   "definition": "İnsan kaynakları ve yöneticilerin inceleme, kurul ve denetim için harcadığı zaman; inceleyici eğitiminin maliyeti.",
+   "dimension": "D3"
+  },
+  {
+   "code": "C9",
+   "name": "Karar süresi",
+   "type": "cost",
+   "definition": "Değerlendirmenin ve itirazın sonuçlanma süresi.",
+   "dimension": "D3"
+  },
+  {
+   "code": "C10",
+   "name": "Mahremiyet yükü",
+   "type": "cost",
+   "definition": "Çalışanın performans verisine erişen kişi sayısı ve erişimin kapsamı.",
+   "dimension": "D3"
+  }
+ ],
+ "dimensions": [
+  {
+   "code": "D1",
+   "name": "Çalışan açısından adalet",
+   "criteria": [
+    "C1",
+    "C2",
+    "C3",
+    "C4"
+   ]
+  },
+  {
+   "code": "D2",
+   "name": "Denetimin etkinliği",
+   "criteria": [
+    "C5",
+    "C6",
+    "C7"
+   ]
+  },
+  {
+   "code": "D3",
+   "name": "Yükler",
+   "criteria": [
+    "C8",
+    "C9",
+    "C10"
+   ]
+  }
+ ],
+ "requirements": [
+  {
+   "code": "R1",
+   "source": "AI Act m.14",
+   "definition": "İnsan denetimi: denetçinin çıktıyı anlayabilmesi, göz ardı edebilmesi ve otomasyon yanlılığının farkında olması (m.14(4))."
+  },
+  {
+   "code": "R2",
+   "source": "AI Act m.26",
+   "definition": "Uygulayıcı yükümlülükleri: denetimin gerekli yetkinlik, eğitim ve yetkiye sahip kişilere verilmesi (m.26(2)), kayıtların saklanması (m.26(6)), işyerinde çalışanların ve temsilcilerinin önceden bilgilendirilmesi (m.26(7))."
+  },
+  {
+   "code": "R3",
+   "source": "AI Act m.86",
+   "definition": "Etkilenen kişinin, kararda sistemin rolü ve kararın ana unsurları hakkında açık ve anlamlı açıklama isteme hakkı."
+  },
+  {
+   "code": "R4",
+   "source": "GDPR m.22(3)",
+   "definition": "Yalnızca otomatik işlemeye dayanan kararlarda insan müdahalesi isteme, görüş bildirme ve karara itiraz hakkı (SCHUFA kararı, C-634/21, ile birlikte)."
+  },
+  {
+   "code": "R5",
+   "source": "KVKK m.11/1-g",
+   "definition": "İşlenen verilerin münhasıran otomatik sistemlerle analiz edilmesi suretiyle kişinin aleyhine bir sonucun ortaya çıkmasına itiraz hakkı."
+  }
+ ],
+ "groups": [
+  "Üst yönetim",
+  "İnsan kaynakları",
+  "Hat yöneticisi",
+  "Hukuk / uyum",
+  "BT / veri",
+  "Çalışan veya çalışan temsilcisi"
+ ],
+ "levels": [
+  {
+   "name": "Üst yönetim",
+   "power": 1.0
+  },
+  {
+   "name": "Orta kademe yönetici",
+   "power": 0.8
+  },
+  {
+   "name": "İlk kademe yönetici",
+   "power": 0.6
+  },
+  {
+   "name": "Uzman",
+   "power": 0.4
+  },
+  {
+   "name": "Çalışan",
+   "power": 0.2
+  }
+ ],
+ "tenure": [
+  "0–2 yıl",
+  "3–5 yıl",
+  "6–10 yıl",
+  "10 yıldan fazla"
+ ],
+ "applicability_scale": [
+  "Kesinlikle evet",
+  "Muhtemelen evet",
+  "Belirsiz",
+  "Muhtemelen hayır",
+  "Kesinlikle hayır"
+ ],
+ "applicability_no": [
+  "Muhtemelen hayır",
+  "Kesinlikle hayır"
+ ],
+ "legal_scale": [
+  0,
+  0.25,
+  0.5,
+  0.75,
+  1
+ ],
+ "cvr_scale": [
+  "Gerekli",
+  "Yararlı ama gerekli değil",
+  "Gereksiz"
+ ],
+ "rating_scale": {
+  "min": 0,
+  "max": 10,
+  "svn": [
+   [
+    0.0,
+    1.0,
+    1.0
+   ],
+   [
+    0.1,
+    0.9,
+    0.9
+   ],
+   [
+    0.2,
+    0.85,
+    0.8
+   ],
+   [
+    0.3,
+    0.75,
+    0.7
+   ],
+   [
+    0.4,
+    0.65,
+    0.6
+   ],
+   [
+    0.5,
+    0.5,
+    0.5
+   ],
+   [
+    0.6,
+    0.35,
+    0.4
+   ],
+   [
+    0.7,
+    0.25,
+    0.3
+   ],
+   [
+    0.8,
+    0.15,
+    0.2
+   ],
+   [
+    0.9,
+    0.1,
+    0.1
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "benefit_labels": [
+   "Son derece kötü",
+   "Çok çok kötü",
+   "Çok kötü",
+   "Kötü",
+   "Orta kötü",
+   "Orta",
+   "Orta iyi",
+   "İyi",
+   "Çok iyi",
+   "Çok çok iyi",
+   "Son derece iyi"
+  ],
+  "cost_labels": [
+   "Yok",
+   "Çok çok düşük",
+   "Çok düşük",
+   "Düşük",
+   "Orta düşük",
+   "Orta",
+   "Orta yüksek",
+   "Yüksek",
+   "Çok yüksek",
+   "Çok çok yüksek",
+   "Son derece yüksek"
+  ]
+ },
+ "parameters": {
+  "cvr_alpha": 0.05,
+  "tau_F": 0.6,
+  "theta": 0.5,
+  "gamma_percentile": 75,
+  "delta": 0.0,
+  "voice_s_max": 0.6,
+  "voice_step": 0.01,
+  "dirichlet_kappa": 60,
+  "dirichlet_draws": 10000,
+  "seed": 20261123,
+  "vikor_lambda": 0.5,
+  "waspas_lambda": 0.5,
+  "cocoso_lambda": 0.5,
+  "arlon_zeta": 0.5,
+  "binary_gate_T": 0.5,
+  "binary_gate_F": 0.5,
+  "power_mappings": {
+   "base": [
+    1.0,
+    0.8,
+    0.6,
+    0.4,
+    0.2
+   ],
+   "concave": [
+    1.0,
+    0.9,
+    0.8,
+    0.6,
+    0.3
+   ],
+   "convex": [
+    1.0,
+    0.5,
+    0.3,
+    0.2,
+    0.1
+   ]
+  },
+  "tau_grid": [
+   0.5,
+   0.55,
+   0.6,
+   0.65,
+   0.7,
+   0.75
+  ],
+  "theta_grid": [
+   0.0,
+   0.1,
+   0.2,
+   0.3,
+   0.4,
+   0.5,
+   0.6,
+   0.7,
+   0.8,
+   0.9,
+   1.0
+  ],
+  "pi_grid": [
+   50,
+   75,
+   90
+  ],
+  "delta_grid": [
+   0.0,
+   0.25
+  ],
+  "dirichlet_floor": 1e-06
+ },
+ "liang_thresholds": {
+  "_source": "Liang et al. (2020), Table 3; rows n, columns a_BW = 3..9; a_BW = 2 -> 0",
+  "3": [
+   0.1667,
+   0.1667,
+   0.1667,
+   0.1667,
+   0.1667,
+   0.1667,
+   0.1667
+  ],
+  "4": [
+   0.1121,
+   0.1529,
+   0.1898,
+   0.2206,
+   0.2527,
+   0.2577,
+   0.2683
+  ],
+  "5": [
+   0.1354,
+   0.1994,
+   0.2306,
+   0.2546,
+   0.2716,
+   0.2844,
+   0.296
+  ],
+  "6": [
+   0.133,
+   0.199,
+   0.2643,
+   0.3044,
+   0.3144,
+   0.3221,
+   0.3262
+  ],
+  "7": [
+   0.1294,
+   0.2457,
+   0.2819,
+   0.3029,
+   0.3144,
+   0.3251,
+   0.3403
+  ],
+  "8": [
+   0.1309,
+   0.2521,
+   0.2958,
+   0.3154,
+   0.3408,
+   0.362,
+   0.3657
+  ],
+  "9": [
+   0.1359,
+   0.2681,
+   0.3062,
+   0.3337,
+   0.3517,
+   0.362,
+   0.3662
+  ]
+ },
+ "forms": {
+  "team": "[Uygulayan kurum ya da ekip]",
+  "privacy": "Katılım gönüllüdür. Formda adınız yer almaz; yalnızca size verilen katılımcı kodu bulunur. Sonuçlar yalnızca toplu olarak raporlanır. [Yanıtları kimin, hangi amaçla analiz edeceğini ve nasıl saklayacağını buraya yazın.]"
+ }
+}

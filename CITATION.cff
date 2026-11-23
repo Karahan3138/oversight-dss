@@ -1,0 +1,25 @@
+# Check the author list and order before the first release.
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Oversight Arrangement DSS: a decision support system for choosing human oversight of AI-supported performance appraisal"
+type: software
+version: "1.0.0"
+license: MIT
+authors:
+  - family-names: Kara
+    given-names: Karahan
+    orcid: "https://orcid.org/0000-0002-1359-0244"
+    affiliation: "İzmir Kâtip Çelebi University"
+  - family-names: Yıkılmaz
+    given-names: İbrahim
+    affiliation: "Kocaeli University"
+  - family-names: Yalçın
+    given-names: Galip Cihan
+    affiliation: "OSTIM Technical University"
+keywords:
+  - decision support system
+  - human oversight
+  - performance appraisal
+  - neutrosophic sets
+  - group decision making
+  - consensus
